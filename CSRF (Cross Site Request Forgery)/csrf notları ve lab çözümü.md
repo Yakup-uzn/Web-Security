@@ -114,3 +114,9 @@ Token geçerli değilse, işlem durdurulur ve bir hata mesajı gösterilir.
 
 #### Diğer HTTP Yöntemleri (PUT, DELETE, PATCH):
 - Bu yöntemler de veri değişikliği yapar ve benzer şekilde CSRF saldırılarına karşı korunmalıdır. Genellikle bu yöntemler de CSRF token ile korunur.
+
+## SameSite Cookie 
+- SameSite, bir web sitesinin çerezlerinin diğer web sitelerinden gelen isteklere ne zaman dahil edileceğini belirleyen bir tarayıcı güvenlik mekanizmasıdır. Bu öznitelik, çerezlerin güvenliğini artırarak CSRF (Cross-Site Request Forgery) ve bilgi sızdırma gibi güvenlik açıklarını azaltmayı amaçlar.
+  
+
+  
