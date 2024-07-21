@@ -34,19 +34,83 @@
   document.forms[0].submit();
 </script>
 </body>
-</html>
 
 ```
 
-- <form> etiketi, bir HTML formu oluşturur. Bu form, bir POST isteği gönderir ve hedef URL, saldırganın değiştirmek istediği e-posta adresini içeren hedef siteye yönlendirilir.action özelliği, formun gönderileceği URL'yi belirtir.method="POST" özelliği, formun POST isteği ile gönderileceğini belirtir.
+- <form> etiketi, bir HTML formu oluşturur. Bu form, bir POST isteği gönderir ve hedef URL, saldırganın değiştirmek istediği e-posta adresini içeren hedef siteye yönlendirilir.action özelliği,formun gönderileceği URL'yi belirtir.method="POST" özelliği, formun POST isteği ile gönderileceğini belirtir.
 
-- <input type="submit" value="Submit request"  etiketi, formun gönderilmesi için bir buton oluşturur.
+- **<input type="submit" value="Submit request"** etiketi, formun gönderilmesi için bir buton oluşturur.
   
-- <script>document.forms[0].submit();</script> kodu, sayfa yüklendiğinde formun otomatik olarak gönderilmesini sağlar. Bu şekilde, kullanıcı herhangi bir işlem yapmadan form gönderilir.
+- **<script>document.forms[0].submit();</script>** kodu, sayfa yüklendiğinde formun otomatik olarak gönderilmesini sağlar. Bu şekilde, kullanıcı herhangi bir işlem yapmadan form gönderilir.
 
 - Bu kod, kurbanın tarayıcısında çalıştırıldığında, kullanıcının bilgisi ve onayı olmadan belirlenen e-posta adresine POST isteği gönderir. Bu, saldırganın kullanıcı adına yetkisiz değişiklikler yapmasına olanak tanır.
 
+  ![](https://github.com/Yakup-uzn/Web-Security/blob/df8ab4fb41b0b7d468372d96a6639c6cf85d9f6e/CSRF%20(Cross%20Site%20Request%20Forgery)/csrf%20ekran%20resimleri/3.png)
 
+- Son adım olarak sayfanın en üstünde bulunan "go to exploit server" butonuna tıklıyoruz.Oluşturduğumuz scripti body kısmına yapıştırıyoruz. “store” butonuna tıklayarak kaydediyoruz ve  daha sonra “deliver exploit to victim” butonu ile kurbana göndererek lab’ın çözümünü sağlıyoruz.
 
+# CSRF tokenı nedir?
+ - bir web uygulamasının kullanıcının her bir oturumunda veya form gönderiminde oluşturduğu, benzersiz ve rastgele bir değer taşıyan bir token'dır.
+Bu token, her form gönderimi sırasında sunucuya gönderilir ve sunucu bu token'ı doğrular. Bu sayede, formun gerçekten kullanıcı tarafından gönderilip gönderilmediği kontrol edilir.
+E-mail değiştirme için bir form oluşturalım.
 
+```html
+    <form action="" method="POST">
+        <label for="email">Yeni Email:</label>
+        <input type="email" id="email" name="email" required>
+        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+        <input type="submit" value="Değiştir">
+    </form>
+```
+- **<input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>"**: CSRF token'ını gizli bir alan olarak formda ekler. Bu token, form gönderildiğinde sunucuya gönderilir ve doğrulama için kullanılır.Aşşagıdaki işlemler gerçekleşir.
 
+```php
+<?php
+session_start();
+
+// CSRF token oluşturma
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+// Form gönderildiğinde işlemler
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // CSRF token doğrulama
+    if ($_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die("CSRF doğrulaması başarısız oldu.");
+    }
+
+    // Email değiştirme işlemleri
+    $new_email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
+    if ($new_email) {
+        echo "Email değiştirildi: " . htmlspecialchars($new_email);
+    } else {
+        echo "Geçersiz email adresi.";
+    }
+
+    // Token'ı yenile
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+?>
+```
+- Eğer oturumda ($_SESSION['csrf_token']) bir token yoksa, yeni bir token oluşturulur.
+
+***Form Gönderildiğinde İşlemler:***
+
+- Form gönderildiğinde (POST isteği), gönderilen CSRF token oturumdaki token ile karşılaştırılır.
+Token geçerli değilse, işlem durdurulur ve bir hata mesajı gösterilir.
+
+- Token geçerli ise, email doğrulaması yapılır ve geçerli ise email değiştirilir.Kullanılan token yenilenir.
+
+- **Token yenileme**, her form gönderiminden sonra yeni bir token oluşturulmasını sağlar. Bu, token'ın ele geçirilmesi durumunda bile saldırganın aynı token'ı kullanarak başka bir form gönderememesini garantiler.
+
+## HTTP Yöntemlerinin Güvenlik Önlemleri
+
+#### POST İsteklerinde CSRF Token Kullanımı:
+- POST isteklerinde CSRF token'ları kullanarak, sunucu gelen isteğin geçerliliğini doğrular. Bu, yetkisiz isteklerin önlenmesine yardımcı olur.
+
+#### GET İsteklerinde Yan Etkileri Azaltma:
+- GET isteklerinin sadece veri alma işlemleri için kullanılması önerilir. Veriyi değiştiren, oluşturan veya silen işlemler için POST kullanılması gerekir. Bu, GET isteklerinin kötüye kullanılmasını engeller.
+
+#### Diğer HTTP Yöntemleri (PUT, DELETE, PATCH):
+- Bu yöntemler de veri değişikliği yapar ve benzer şekilde CSRF saldırılarına karşı korunmalıdır. Genellikle bu yöntemler de CSRF token ile korunur.
