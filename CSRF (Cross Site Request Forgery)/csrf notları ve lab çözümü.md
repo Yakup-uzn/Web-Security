@@ -12,8 +12,9 @@
   - Lab da bize bir kullanıcı hesabı vermiş.Bizde o kullanıcı hesabı ile uygulamamıza giriş yapıyoruz.
    Giriş yaptıktan sonra maili csrf zafiyetini kullanarak değiştirmemizi istiyor. 
   
-  ![](https://github.com/Yakup-uzn/Web-Security/blob/995f2612c5d3873e8439a284b7559af6718405ba/CSRF%20(Cross%20Site%20Request%20Forgery)/csrf%20ekran%20resimleri/1)
+  ![](https://github.com/Yakup-uzn/Web-Security/blob/e9a2f1554f7d8105faf395447e4e1a189d9846cd/CSRF%20(Cross%20Site%20Request%20Forgery)/csrf%20ekran%20resimleri/1.png)
 
   -Hesaba giriş yaptık ve mailimizi değiştirmek için bir istek yolladık.Bu isteğimizi inceleyelim.
 
+  ![](https://github.com/Yakup-uzn/Web-Security/blob/e9a2f1554f7d8105faf395447e4e1a189d9846cd/CSRF%20(Cross%20Site%20Request%20Forgery)/csrf%20ekran%20resimleri/2.png)
   
