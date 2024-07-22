@@ -12,11 +12,11 @@
 - Lab da bize bir kullanıcı hesabı vermiş.Bizde o kullanıcı hesabı ile uygulamamıza giriş yapıyoruz.
    Giriş yaptıktan sonra maili csrf zafiyetini kullanarak değiştirmemizi istiyor. 
   
-  ![](https://github.com/Yakup-uzn/Web-Security/blob/6cda870572837bc0318086e69665714018c3831c/Resimler/1.png)
+![](https://github.com/Yakup-uzn/Web-Security/blob/6cda870572837bc0318086e69665714018c3831c/Resimler/1.png)
 
 - Hesaba giriş yaptık ve mailimizi değiştirmek için bir istek yolladık.Bu isteğimize bakalım.
 
-  ![](https://github.com/Yakup-uzn/Web-Security/blob/6cda870572837bc0318086e69665714018c3831c/Resimler/2.png)
+![](https://github.com/Yakup-uzn/Web-Security/blob/6cda870572837bc0318086e69665714018c3831c/Resimler/2.png)
 
 - Şimdi bizim bir HTML scripti oluşturmamız gerekiyor.Bu requeste sağ tıklayıp “engagement tool” seçeneğinin üstüne gelip oradan “Generate CSRF PoC” seçeneğini seçiyoruz.Bu bize burpsuite tarafından otomatik html scripti oluşturur.
 
@@ -45,7 +45,7 @@
 
 - Bu kod, kurbanın tarayıcısında çalıştırıldığında, kullanıcının bilgisi ve onayı olmadan belirlenen e-posta adresine POST isteği gönderir. Bu, saldırganın kullanıcı adına yetkisiz değişiklikler yapmasına olanak tanır.
 
-  ![](https://github.com/Yakup-uzn/Web-Security/blob/6cda870572837bc0318086e69665714018c3831c/Resimler/3.png)
+![](https://github.com/Yakup-uzn/Web-Security/blob/6cda870572837bc0318086e69665714018c3831c/Resimler/3.png)
 
 - Son adım olarak sayfanın en üstünde bulunan "go to exploit server" butonuna tıklıyoruz.Oluşturduğumuz scripti body kısmına yapıştırıyoruz. “store” butonuna tıklayarak kaydediyoruz ve  daha sonra “deliver exploit to victim” butonu ile kurbana göndererek lab’ın çözümünü sağlıyoruz.
 
