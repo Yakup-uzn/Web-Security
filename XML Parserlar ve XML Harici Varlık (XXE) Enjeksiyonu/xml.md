@@ -85,3 +85,47 @@ Bu şekilde XML belgesinin kurallara göre yazılmasını sağlıyoruz.Şu şeki
 
 Bu şekilde 2 ayrı belge oluşturarak da yapabiliriz.XML'deki DOCTYPE özelliğinin SYSTEM operandı sayesinde, XML belgesi bir yerel dosyaya referans verebilir ve bu dosyayı XML parser'a okutabiliriz. Ancak, bu özellik kötüye kullanılabilir ve XXE (XML External Entity) adı verilen bir güvenlik açığına yol açabilir. XXE zafiyeti, saldırganların sistemdeki hassas dosyalara erişmesine veya yetkisiz komutlar çalıştırmasına olanak tanır. Bu nedenle, XML belgelerini işlerken dikkatli olunmalı ve gerekli güvenlik önlemleri alınmalıdır.
 
+##XML Entity ve XXE (XML External Entity) Zafiyeti
+
+XML entity (varlık) özelliği, tekrar eden içerikleri yönetmek ve özel karakterleri temsil etmek için kullanılır. Dahili (internal) ve harici (external) entity'ler olarak ikiye ayrılır. Harici entity'ler, dış kaynaklara erişim sağladığı için güvenlik açıklarına yol açabilir. Bu tür zafiyetlere XXE (XML External Entity) adı verilir.
+
+### Dahili (Internal) Entity Örneği
+Dahili entity'ler, XML belgesi içinde tanımlanır ve kısa kod parçalarını uzun içeriklerle değiştirilir.
+```xml
+<!DOCTYPE kitaplik [
+    <!ENTITY yazar "Ahmet Yılmaz">
+]>
+<kitaplik>
+    <kitap>
+        <baslik>Bir Roman</baslik>
+        <yazar>&yazar;</yazar>
+    </kitap>
+</kitaplik>
+
+```
+Bu örnekte, &yazar; entity'si "Ahmet Yılmaz" metni ile değiştirilir.
+
+### Harici (External) Entity ve XXE Zafiyeti
+Harici entity'ler, XML belgesinin dışındaki kaynaklara referans verir. Bu özellik kötüye kullanılarak XXE saldırıları gerçekleştirilebilir.
+
+```xml
+<!DOCTYPE kitaplik [
+    <!ENTITY dosya SYSTEM "file:///etc/passwd">
+]>
+<kitaplik>
+    <kitap>
+        <baslik>Gizli Dosya</baslik>
+        <icerik>&dosya;</icerik>
+    </kitap>
+</kitaplik>
+
+
+```
+Bu örnekte, &dosya; entity'si, sunucunun dosya sistemindeki /etc/passwd dosyasına referans verir. Bu, saldırganların hassas bilgilere erişmesine olanak tanır.
+
+##Out-of-band XML external entity (OOB XXE)
+
+##XLST Parsing
+
+##XML İşleme Sırasında DTD'yi Devre Dışı Bırakma
+
