@@ -26,3 +26,12 @@ Benzer şekilde, $on.constructor('alert(1)') bir fonksiyon oluşturur, ancak bu 
 
 <h1> XSS ve innerHTML </h1>
 
+innerHTML, bir HTML elementinin içeriğini dinamik olarak değiştiren bir JavaScript özelliğidir. Kullanıcı girişlerini veya herhangi bir veri parçasını bir elementin içine HTML olarak yerleştirmek için kullanılır.
+
+document.getElementById("example").innerHTML = "<h1>Merhaba Dünya</h1>";
+
+Bu örnek, example ID'li HTML elementinin içeriğini değiştirecektir. Eğer dinamik olarak bir kullanıcı girdisini HTML olarak ekleyecek olursanız, XSS saldırılarına açık hale gelebilirsiniz.
+
+<h3>innerHTML İçine <script> Tagi Koymak </h3>
+
+Tarayıcılar, güvenlik ve performans nedenlerinden dolayı, innerHTML kullanılarak sonradan sayfaya eklenen <script> taglerini otomatik olarak çalıştırmaz. Bu, tarayıcıların bilinçli bir güvenlik önlemidir. Dinamik olarak eklenen <script> etiketleri doğrudan çalışmaz, bu yüzden kötü niyetli bir kullanıcının XSS açığından faydalanması bu yolla engellenmeye çalışılır.
