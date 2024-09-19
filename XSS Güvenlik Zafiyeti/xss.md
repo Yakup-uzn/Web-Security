@@ -23,7 +23,7 @@ alert(1): Tarayıcıda bir uyarı penceresi açmak için kullanılan JavaScript 
 ```javascript
 function myFunc() { return 42; }
 myFunc();  // Bu fonksiyonu çalıştırır.
-```javascript
+```
 
 Benzer şekilde, $on.constructor('alert(1)') bir fonksiyon oluşturur, ancak bu fonksiyonu çalıştırmanız gerekir. İşte bu noktada ikinci parantez devreye girer:
 
